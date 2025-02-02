@@ -1,4 +1,4 @@
-import arduino from '../assets/arduino.png'
+
 import css from '../assets/css.png'
 import html from '../assets/html-5.png'
 import github from '../assets/github.png'
