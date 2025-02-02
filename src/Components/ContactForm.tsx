@@ -46,12 +46,17 @@ const ContactForm = forwardRef<HTMLDivElement>(function (_, ref): JSX.Element {
 
     if (mailConf.ok) {
       setLoading(false);
+      setError({
+        status: false,
+        message: "",
+      });
     } else {
       setLoading(false);
       setError({
         status: true,
-        message: "",
+        message: "Something went wrong!",
       });
+      console.log(error);
     }
   };
 
