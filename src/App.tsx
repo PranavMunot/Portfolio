@@ -83,8 +83,7 @@ function App() {
               className="cursor-pointer text-primary text-3xl "
             />
             <AiFillLinkedin
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 window.open(
                   "https://www.linkedin.com/in/pranavmunot/",
                   "_blank"
@@ -107,7 +106,7 @@ function App() {
               className="cursor-pointer text-primary text-3xl "
             />
           </div>
-          <div className="absolute w-full animate-bounce bottom-5 sm:bottom-16 flex justify-center">
+          <div className="absolute text-primary w-full animate-bounce bottom-5 sm:bottom-16 flex justify-center">
             <FaCircleChevronDown
               onClick={() => {
                 slideTo("about");
@@ -190,11 +189,52 @@ function App() {
               <p className="text-2xl mb-2">Social</p>
 
               <ul>
-                <li className="nav-item">Gmail</li>
-                <li className="nav-item">Instagram</li>
-                <li className="nav-item">LinkedIn</li>
-                <li className="nav-item">GitHub</li>
-                <li className="nav-item">WhatsApp</li>
+                <li
+                  onClick={() => {
+                    window.open("mailto:pranavmunot09@gmail.com", "_blank");
+                  }}
+                  className="nav-item cursor-pointer"
+                >
+                  Gmail
+                </li>
+                <li
+                  onClick={() => {
+                    window.open(
+                      "https://www.instagram.com/__pranavmunot__",
+                      "_blank"
+                    );
+                  }}
+                  className="nav-item cursor-pointer"
+                >
+                  Instagram
+                </li>
+                <li
+                  onClick={() => {
+                    window.open(
+                      "https://www.linkedin.com/in/pranavmunot/",
+                      "_blank"
+                    );
+                  }}
+                  className="nav-item cursor-pointer"
+                >
+                  LinkedIn
+                </li>
+                <li
+                  onClick={() => {
+                    window.open("https://github.com/PranavMunot", "_blank");
+                  }}
+                  className="nav-item cursor-pointer"
+                >
+                  GitHub
+                </li>
+                <li
+                  onClick={() => {
+                    window.open("https://wa.me/918669171507", "_blank");
+                  }}
+                  className="nav-item cursor-pointer"
+                >
+                  WhatsApp
+                </li>
               </ul>
             </div>
           </div>

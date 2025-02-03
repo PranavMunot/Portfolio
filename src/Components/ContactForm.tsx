@@ -2,6 +2,7 @@ import { AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 import React, { FormEvent, forwardRef, useState } from "react";
+import Status from "./Status";
 
 type form = {
   name: string;
@@ -10,53 +11,64 @@ type form = {
   message: string;
 };
 
-type formError = {
-  status: boolean;
-  message: string;
+const baseForm: form = {
+  name: "",
+  email: "",
+  contact: "",
+  message: "",
 };
 
 const ContactForm = forwardRef<HTMLDivElement>(function (_, ref): JSX.Element {
-  const [form, setForm] = useState<form>({
-    name: "",
-    email: "",
-    contact: "",
-    message: "",
-  });
+  const [form, setForm] = useState<form>({ ...baseForm });
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<formError>({
-    status: false,
-    message: "",
-  });
+  const [state, setState] = useState<string>("");
+
+  const checkFormData = (): boolean => {
+    if (
+      form.contact.trim() !== "" &&
+      /^\+?\d+([-\s]\d+)*$/.test(form.contact) &&
+      form.name.trim() !== "" &&
+      form.email.trim() !== "" &&
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email) &&
+      form.message.trim() !== ""
+    )
+      return true;
+    return false;
+  };
 
   const getMailSentData = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    const mailConf = await fetch(
-      // "http://localhost:4000/send-mail",
-      "https://emailnodescr.onrender.com/send-mail",
-      {
-        method: "POST",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...form }),
-      }
-    );
-
-    if (mailConf.ok) {
-      setLoading(false);
-      setError({
-        status: false,
-        message: "",
-      });
+    setState("");
+    if (checkFormData()) {
+      setLoading(true);
+      setState("wait");
+      await fetch(
+        // "http://localhost:4000/send-mail",
+        "https://emailnodescr.onrender.com/send-mail",
+        {
+          method: "POST",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...form }),
+        }
+      )
+        .then((res) => {
+          console.log("res", res);
+          if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+          // else
+          setLoading(false);
+          setForm({ ...baseForm });
+          setState("success");
+        })
+        .catch((_) => {
+          console.log("err", _);
+          setLoading(false);
+          setState("failed");
+        });
     } else {
-      setLoading(false);
-      setError({
-        status: true,
-        message: "Something went wrong!",
-      });
-      console.log(error);
+      setState("wrong");
     }
   };
 
@@ -119,11 +131,13 @@ const ContactForm = forwardRef<HTMLDivElement>(function (_, ref): JSX.Element {
           </div>
         </div>
         <form onSubmit={getMailSentData} className="flex-1 flex flex-col gap-4">
+          {state !== "" && <Status state={state} />}
           <div>
             <label>Name</label>
             <input
               type="name"
               name="name"
+              value={form.name}
               onChange={changeValue}
               className="px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               placeholder="Your name"
@@ -134,6 +148,7 @@ const ContactForm = forwardRef<HTMLDivElement>(function (_, ref): JSX.Element {
             <input
               type="email"
               name="email"
+              value={form.email}
               onChange={changeValue}
               className="px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               placeholder="you@example.com"
@@ -144,6 +159,7 @@ const ContactForm = forwardRef<HTMLDivElement>(function (_, ref): JSX.Element {
             <input
               type="text"
               name="contact"
+              value={form.contact}
               onChange={changeValue}
               className="px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               placeholder="+00 21212 12121"
@@ -155,6 +171,7 @@ const ContactForm = forwardRef<HTMLDivElement>(function (_, ref): JSX.Element {
               name="message"
               maxLength={500}
               rows={4}
+              value={form.message}
               onChange={changeValue}
               className=" px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               placeholder="Your message"
